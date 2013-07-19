@@ -1,0 +1,23 @@
+library random
+database dbname=dn
+sql dn.sql
+rewrite url Dn/main 
+rewrite url Dn/*
+safeGet player
+allow url http://dncdn.dvlabs.com/ipod/*
+allow url http://traffic.libsyn.com/democracynow/*
+allow url http://dbpmail.net/css/default.css
+allow url http://dbpmail.net
+allow url http://hub.darcs.net/dbp/dnplayer
+allow url http://democracynow.org
+allow url http://lab.dbpmail.net/dn/main.css
+script http://lab.dbpmail.net/static/jquery-1.9.1.min.js
+script http://lab.dbpmail.net/dn/dn.js
+ffi dnjs
+jsFunc Dnjs.init=init
+effectful Dnjs.init
+
+
+$/option
+sourceL
+dn
