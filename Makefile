@@ -18,9 +18,9 @@ clean:
 	rm -f librandom.a librandom.o
 
 deploy-static: dn.js main.css
-	scp dn.js host@dbpmail.net:dbpmail/dn/dn.js
-	scp main.css host@dbpmail.net:dbpmail/dn/main.css
+	scp dn.js host@lab.positiondev.com:positiondev-lab/dn/static/dn.js
+	scp main.css host@lab.positiondev.com:positiondev-lab/dn/static/main.css
 
 deploy: production deploy-static
-	scp dn-production.exe host@dbpmail.net:dbpmail/dn/dn-new.exe
-	ssh host@dbpmail.net /var/www/dbpmail/dn/reload.sh
+	scp dn-production.exe host@lab.positiondev.com:positiondev-lab/dn/dn-new.exe
+	ssh host@lab.positiondev.com /var/www/positiondev-lab/dn/reload.sh

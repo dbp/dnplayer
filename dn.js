@@ -26,9 +26,10 @@ function init(player, offset, set_offset, video_url, audio_url) {
             player.play();
             window.setInterval(update_time(set_offset), 1000);
         });
-    } else if (isiOS() || isAndroidChrome()) {
-        // iOS doesn't let you seek till much later... and won't let you start automatically,
-        // so calling play() is pointless
+    } else if (isAndroidChrome()) {
+        // Android Chrome doesn't let you seek till much later... and
+        // won't let you start automatically, so calling play() is
+        // pointless
 	$("#player").one("canplaythrough",function () {
 	    $("#player").one("progress", function () {
 		if (offset != 0) {
@@ -36,9 +37,9 @@ function init(player, offset, set_offset, video_url, audio_url) {
                 }
                 window.setInterval(update_time(set_offset), 1000);
 	    });
-	});   
+	});
     } else {
-        $("#player").after("<h3>As of now, the player does not support your browser.</h3>");
+        $("#player").after("<h3>As of now, the player does not support your browser. Sorry!</h3>");
     }
 }
 

@@ -1,0 +1,17 @@
+Bluepill.application("dnplayer") do |app|
+      app.process("app") do |process|
+        process.start_command = "/var/www/positiondev-lab/dn/dn.exe -p 18000 -t 4 &"
+	process.pid_command = "ps aux | grep \"[d]n.exe -p 18000 -t 4\" | awk '{print $2}'"
+        process.daemonize = true
+        process.uid = "host"
+        process.gid = "host"
+        process.working_dir = "/var/www/positiondev-lab/dn"
+
+      process.checks :flapping, :times => 2, :within => 30.seconds, :retry_in => 7.seconds
+
+process.stdout = process.stderr = "/tmp/dnplayer_server.log"
+
+        process.checks :cpu_usage, :every => 10.seconds, :below => 50, :times => 3
+        process.checks :mem_usage, :every => 10.seconds, :below => 200.megabytes, :times => [3,5]
+      end
+    end

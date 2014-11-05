@@ -2,7 +2,7 @@
    convenient serialization, Offset is seconds into the show *)
 table u : {Token : string, Date : string, Offset : float} PRIMARY KEY Token
 cookie c : {Token : string}
-           
+
 val date_format = "%Y-%m%d"
 
 (* this is awful kludgy, but the alternative is to write a date library,
@@ -18,9 +18,9 @@ fun before_nine t =
           | "06" => True
           | "07" => True
           | "08" => True
-          | _    => False 
+          | _    => False
     end
-    
+
 fun recent_show t =
    let val seconds_day = 24*60*60 in
    let val nt = (if before_nine t then (addSeconds t (-seconds_day)) else t) in
@@ -36,7 +36,7 @@ fun recent_show t =
 fun est_now () =
     n <- now;
     return (addSeconds n (-(4*60*60)))
-   
+
 (* like above; linking to cmath would be better, but since I only
    need an approximation, this is fine *)
 fun log26_approx n c : int =
@@ -55,17 +55,19 @@ fun set_token token =
     setCookie c {Value = {Token = token},
                  Expires = None,
                  Secure = False}
-    
+
 fun clear_token () =
     clearCookie c
 
+val meta = Tags.meta
+val code = Tags.code
 
 (* html fragments *)
-fun heading () = 
+fun heading () =
     <xml>
         <meta name="viewport" content="width=device-width"/>
-        <link rel="stylesheet" typ="text/css" href="http://dbpmail.net/css/default.css"/>
-        <link rel="stylesheet" typ="text/css" href="http://lab.dbpmail.net/dn/main.css"/>
+        <link rel="stylesheet" typ="text/css" href="http://dbp.io/css/default.css"/>
+        <link rel="stylesheet" typ="text/css" href="http://lab.positiondev.com/dn/static/main.css"/>
     </xml>
 
 fun about () =
@@ -76,12 +78,12 @@ fun about () =
       that remembers how much you have watched.
     </p>
     </xml>
-    
+
 fun footer () =
     <xml>
-      <p>Created by <a href="http://dbpmail.net">Daniel Patterson</a>.
+      <p>Created by <a href="http://positiondev.com">Daniel Patterson</a>.
         <br/>
-        View the <a href="http://hub.darcs.net/dbp/dnplayer">Source</a>.</p>
+        View the <a href="http://github.com/dbp/dnplayer">Source</a>.</p>
     </xml>
 
 (********************
@@ -93,7 +95,7 @@ fun main () =
     mc <- getCookie c;
     case mc of
         Some cv => redirect (url (player cv.Token))
-      | None => 
+      | None =>
         return (<xml>
           <head>
             {heading ()}
@@ -123,7 +125,7 @@ fun main () =
             </ol>
 
             <h3>Compatibility</h3>
-            <p>This currently works with Chrome (on computers and Android) and iPhones/iPads.</p>  
+            <p>This currently only works with Chrome (on computers and Android).</p>
             {footer ()}
           </body>
         </xml>)
@@ -136,7 +138,7 @@ and create_player () =
          VALUES ({[token]}, {[timef date_format (recent_show n)]}, 0.0));
     set_token token;
     redirect (url (player token))
-    
+
 
 (* The player handler, deciding what show to render, etc *)
 and player token =
@@ -163,7 +165,7 @@ and player token =
 and render token date fmtted_date offset =
     os <- SourceL.create offset;
     player_id <- fresh;
-    let val video_url = bless (strcat "http://dncdn.dvlabs.com/ipod/dn"
+    let val video_url = bless (strcat "http://publish.dvlabs.com/democracynow/ipod/dn"
                                       (strcat fmtted_date ".mp4")) in
     let val audio_url = bless (strcat "http://traffic.libsyn.com/democracynow/dn"
                                       (strcat fmtted_date "-1.mp3")) in
@@ -210,4 +212,3 @@ and init token player_id os set_offset video_url audio_url =
 (* On rpc from client, update the offset, provided we are increasing the offset *)
 and update token offset =
     dml (UPDATE u SET Offset = {[offset]} WHERE Token = {[token]} AND {[offset]} > Offset)
-
